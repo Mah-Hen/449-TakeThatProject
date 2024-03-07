@@ -3,7 +3,7 @@
 import javax.swing.*;
 import java.awt.*;
 /*
- * This class keeps track of player information
+ * This class keeps track of player information 
  */
 public class Player
     extends JPanel {
