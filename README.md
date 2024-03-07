@@ -1,5 +1,5 @@
 # 449-TakeThat-Prj
-Hello! Welcome to the second installation of MSMU's CMSCI 449 (Intro to AI) project. Here we are using two types of searches to pit computer against computer in this game. 
+Hello! Welcome to the second installation of MSMU's CMSCI 449 (Intro to AI) project. Here we are using two types of searches in this project. 
 Read below for me details:
 
 For this project, you will write a program to play the game Take That! The game is played by two players on a board of size N by N. Each space has a number in the range from -25 to 75. The first player is called the row player, and the second is called the column player. At the start, a random row of the board is selected.
