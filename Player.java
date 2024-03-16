@@ -42,6 +42,10 @@ public class Player
 	  // accessor for score
 	  return score;
   }
+
+  public String getName(){
+    return name;
+  }
   public String getWinner(Player other)
   { // compares players to see who won
     if (this.score > other.score)

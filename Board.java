@@ -113,7 +113,7 @@ public class Board
 	  }
 	  else // similar for column player
 	  {
-		   messageLabel.setText(colP.getName()+" thinking");
+		   messageLabel.setText(colP.getName()+" is thinking");
 		   int rowChoice = makeComputerChoice();
 		   if (makeMove(rowChoice, currentCol, 
 				   cells[rowChoice][currentCol].getValue()))
@@ -131,6 +131,9 @@ public class Board
   {
 	  Random rand = new Random();
 	  int answer;
+
+    // *READ ME* This is prolly where we're going to implement the minimax algorithm. 
+    // Then create the alphaBeta from there. What you think? I also found a bug in his code. 
 	  if (isRowsTurn)
 		  while (cells[currentRow][answer = rand.nextInt(rowLabels.length)].isSelected());
 	  else
