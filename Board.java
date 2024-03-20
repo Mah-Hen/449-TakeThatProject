@@ -103,7 +103,7 @@ public class Board
 	  if (isRowsTurn) // is it row player's turn?
 	  {
 		  // tell user the computer player is thinking
-		   messageLabel.setText(rowP.getName()+" thinking");
+		   messageLabel.setText(rowP.getName()+" is \nthinking");
 		   // determine the player's move
 		   int colChoice = makeComputerChoice();
 		   // attempt to make the move
@@ -113,7 +113,7 @@ public class Board
 	  }
 	  else // similar for column player
 	  {
-		   messageLabel.setText(colP.getName()+" is thinking");
+		   messageLabel.setText(colP.getName()+" is \nthinking");
 		   int rowChoice = makeComputerChoice();
 		   if (makeMove(rowChoice, currentCol, 
 				   cells[rowChoice][currentCol].getValue()))
@@ -131,12 +131,15 @@ public class Board
   {
 	  Random rand = new Random();
 	  int answer;
+    Node gameNode = new Node(rowP.getBoard(), null);
 
     // *READ ME* This is prolly where we're going to implement the minimax algorithm. 
     // Then create the alphaBeta from there. What you think? I also found a bug in his code. 
-	  if (isRowsTurn)
-		  while (cells[currentRow][answer = rand.nextInt(rowLabels.length)].isSelected());
+	  if (isRowsTurn){
+      gameNode.isTerminal(rowP.getBoard());
+		  while (cells[currentRow][answer = rand.nextInt(rowLabels.length)].isSelected());}
 	  else
+      gameNode.isTerminal(colP.getBoard());
 		  while (cells[answer = rand.nextInt(rowLabels.length)][currentCol].isSelected());
 	  return answer;
 		  
@@ -205,4 +208,13 @@ public class Board
   {
 	  messageLabel.setText(mesg);
   }
+
+  public Player getRowPlayer(){
+    return rowP;
+  }
+
+  public Player getColPlayer(){
+    return colP;
+  }
+
 }

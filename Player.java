@@ -27,6 +27,10 @@ public class Player
   { // set the link to the board
 	  theBoard = b;
   }
+
+  public Board getBoard(){
+    return theBoard;
+  }
   public void addToScore(int s)
   {
 	  // update player's score
@@ -55,6 +59,14 @@ public class Player
     else
       return "It's a tie!";
   }
+
+  public boolean isWinner(Player other){
+    if (this.score > other.score) {
+      return true;
+    }
+    return false;
+  }
+
   public void takeTurn()
   { // make this player take a turn
 	 if (isComputer)
