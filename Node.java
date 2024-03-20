@@ -75,7 +75,21 @@ private Integer utilityFunction(Board brd) {
 
 private ArrayList<Integer> Actions(Board brd){
     ArrayList<Integer> actions = new ArrayList<>();
+    Cell[][] cells = brd.getCells();
 
+    if(brd.getTurn()){ // if rows turn
+        int currRow = brd.getCurrentRow();
+        for(int i=0; i<cells[currRow].length; i++){
+            actions.add(i);
+        }
+    }
+    else{ 
+        int currCol = brd.getCurrentCol();
+        for(int i=0; i<cells[currCol].length; i++){
+            actions.add(i);
+        }
+    }
+    
     return actions;
 }
 

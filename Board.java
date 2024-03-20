@@ -217,4 +217,22 @@ public class Board
     return colP;
   }
 
+  public int getCurrentRow(){
+    return currentRow;
+  }
+
+  public int getCurrentCol(){
+    return currentCol;
+  }
+
+  public Cell[][] getCells(){
+    return cells;
+  }
+
+  public boolean getTurn(){
+    return isRowsTurn;
+  }
+
+
+
 }
