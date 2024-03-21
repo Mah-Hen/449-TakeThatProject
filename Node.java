@@ -14,10 +14,10 @@ public Node(Board brd, Node parent) {
 }
 
 public int minimaxSearch(Board brd){
-    String[] valueMoveList = maxValue(brd);
-    int utilValue = Integer.parseInt(valueMoveList[0]);
+    Integer[] valueMoveList = maxValue(brd);
+    int utilValue = valueMoveList[0];
     if(valueMoveList[1]!=null){
-        int moveValue = Integer.parseInt(valueMoveList[1]);
+        int moveValue = valueMoveList[1];
         return moveValue;}
     return null; // Gotta find a number to act as our null flag or maybe change the return type
 }
@@ -65,8 +65,30 @@ public Integer[] minValue(Board brd){
 }
 
 private Board Result(Board brd, Integer action) {
-    Board newBoard = new Board(); // Getters and Setters
-    return newBoard;
+    Board copyBoard = brd.copy(); // Getters and Setters
+    Cell[][] copyBoardCell = copyBoard.getCells();
+    int chosenValue = action;
+
+    if(brd.getTurn()){ // if row Player turn
+        int currRow = brd.getCurrentRow();
+        for(int col=0; col<copyBoardCell[currRow].length; col++){
+            if(copyBoardCell[currRow][col].getValue() == chosenValue){
+                copyBoardCell[currRow][col].setValue(-100);; // Flag indicator to know its been selected
+                break;
+            }
+        }
+}
+else{
+    int currCol = brd.getCurrentCol();
+    for(int row=0; row<copyBoardCell.length; row++){
+        if(copyBoardCell[row][currCol].getValue() == chosenValue){
+            copyBoardCell[row][currCol].setValue(-100);; // Flag indicator to know its been selected
+            break;
+        }
+    }
+}
+
+    return copyBoard;
 }
 
 private Integer utilityFunction(Board brd) {
@@ -77,16 +99,16 @@ private ArrayList<Integer> Actions(Board brd){
     ArrayList<Integer> actions = new ArrayList<>();
     Cell[][] cells = brd.getCells();
 
-    if(brd.getTurn()){ // if rows turn
+    if(brd.getTurn()){ // if row Player turn
         int currRow = brd.getCurrentRow();
-        for(int i=0; i<cells[currRow].length; i++){
-            actions.add(i);
+        for(int col=0; col<cells[currRow].length; col++){
+            actions.add(col);
         }
     }
     else{ 
         int currCol = brd.getCurrentCol();
-        for(int i=0; i<cells[currCol].length; i++){
-            actions.add(i);
+        for(int row=0; row<cells.length; row++){
+            actions.add(row);
         }
     }
     

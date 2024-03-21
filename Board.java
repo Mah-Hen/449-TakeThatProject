@@ -26,6 +26,10 @@ public class Board
   private JLabel[] rowLabels; // the labels to indicate the row to play in
   private Cell[][] cells; // the grid of numbers
   private JLabel messageLabel; // label for turn information, winner
+  private int brdSize;
+  private int brdMin;
+  private int brdMax;
+  
   public Board(int size, Player rp, Player cp, int min, int max, Random rand) {
 	  // Constructor
 	  // size is grid size (assume square)
@@ -34,6 +38,9 @@ public class Board
 	  // rand is random number generator
     rowP = rp; // remember player information
     colP = cp;
+    brdSize = size; // For copy purposes
+    brdMin = min; // For copy purposes
+    brdMax = max; // For copy purposes
     isRowsTurn = rand.nextInt()%2 == 0; // determine who moves first
     rowLabels = new JLabel[size]; // make arrays of labels for row/column headings
     colLabels = new JLabel[size];
@@ -233,6 +240,10 @@ public class Board
     return isRowsTurn;
   }
 
+  public Board copy(){
+    Random rand = new Random();
+    return new Board(this.brdSize, this.rowP, this.colP, this.brdMin, this.brdMax, rand);
+  }
 
 
 }
