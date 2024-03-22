@@ -20,6 +20,7 @@ public class Board
     extends JPanel {
   private Player rowP; // the two players
   private Player colP;
+  private int previousChosenRow, previousChosenCol = -1;
   private boolean isRowsTurn; // whose turn is it
   private int currentRow, currentCol; // row and column of last move
   private JLabel[] colLabels; // the labels that indicate which column to play in
@@ -232,6 +233,10 @@ public class Board
     return currentCol;
   }
 
+  public int getBoardSize(){
+    return brdSize;
+  }
+
   public Cell[][] getCells(){
     return cells;
   }
@@ -240,10 +245,22 @@ public class Board
     return isRowsTurn;
   }
 
+
   public Board copy(){
     Random rand = new Random();
     return new Board(this.brdSize, this.rowP, this.colP, this.brdMin, this.brdMax, rand);
   }
+  public void setPreviousChosenPosition(int row, int col){
+    this.previousChosenRow = row;
+    this.previousChosenCol = col;
+  }
 
+  public int getPreviousRow(){
+    return this.previousChosenRow;
+  }
+
+  public int getPreviousCol(){
+    return this.previousChosenCol;
+  }
 
 }

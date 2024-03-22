@@ -5,7 +5,6 @@ public class Node {
     private Board gameBoard;
     private Node parent;
     private int evalFunction;
-    private int utilFunction;
 
 
 public Node(Board brd, Node parent) {
@@ -13,26 +12,37 @@ public Node(Board brd, Node parent) {
     this.parent = parent; // initialize state parent
 }
 
-public int minimaxSearch(Board brd){
-    Integer[] valueMoveList = maxValue(brd);
+private Board getBoard(){
+    return gameBoard;
+}
+
+private int getEvalFunction(){
+    return evalFunction;
+}
+
+public int minimaxSearch(){
+    Node gameBoardNode = new Node(gameBoard, null);
+
+    Integer[] valueMoveList = maxValue(gameBoardNode);
     int utilValue = valueMoveList[0];
     if(valueMoveList[1]!=null){
         int moveValue = valueMoveList[1];
         return moveValue;}
-    return null; // Gotta find a number to act as our null flag or maybe change the return type
+    return 0; // Gotta find a number to act as our null flag or maybe change the return type
 }
 
-public Integer[] maxValue(Board brd){
+public Integer[] maxValue(Node brdNode){
     Integer [] maxValueMoveList = new Integer [2];
-    if(isTerminal(brd)){
-        maxValueMoveList[0] = utilityFunction(brd);
+    if(isTerminal(brdNode.getBoard())){
+        maxValueMoveList[0] = utilityFunction(brdNode);
         maxValueMoveList[1] = null;
         return maxValueMoveList;
     }
     int lowValue = Integer.MIN_VALUE;
-    for(Integer action:Actions(brd)){
-        Board newBoard = Result(brd, action);
-        Integer [] minValueMoveList = minValue(newBoard);
+    for(Integer action:Actions(brdNode.getBoard())){
+        Board modifiedBoard = Result(brdNode.getBoard(), action);
+        Node modifiedBoardNode = new Node(modifiedBoard, parent);
+        Integer [] minValueMoveList = minValue(modifiedBoardNode);
         Integer minLowValue = minValueMoveList[0]; // Utility Function
         if (minLowValue > lowValue){ // if the node's util function is greater than the low value
             lowValue = minLowValue;
@@ -43,17 +53,19 @@ public Integer[] maxValue(Board brd){
     return maxValueMoveList;
 }
 
-public Integer[] minValue(Board brd){
+public Integer[] minValue(Node brdNode){
+
     Integer[] minValueMoveList = new Integer[2];
-    if(isTerminal(brd)){
-        minValueMoveList[0] = utilityFunction(brd);
+    if(isTerminal(brdNode.getBoard())){
+        minValueMoveList[0] = utilityFunction(brdNode);
         minValueMoveList[1] = null;
         return minValueMoveList;
     }
     int highValue = Integer.MAX_VALUE;
-    for(Integer action:Actions(brd)){
-        Board newBoard = Result(brd, action); // new Board after the action is applied
-        Integer[] maxValueMoveList = maxValue(newBoard);
+    for(Integer action:Actions(brdNode.getBoard())){
+        Board modifiedBoard = Result(brdNode.getBoard(), action); // new Board after the action is applied
+        Node modifiedBoardNode = new Node(modifiedBoard, brdNode);
+        Integer[] maxValueMoveList = maxValue(modifiedBoardNode);
         Integer maxLowValue = maxValueMoveList[0]; // Utility Function
         if(maxLowValue < highValue){
             highValue = maxLowValue;
@@ -87,11 +99,14 @@ else{
         }
     }
 }
-
-    return copyBoard;
+    
+    return copyBoard; // new modified board
 }
 
-private Integer utilityFunction(Board brd) {
+private Integer utilityFunction(Node brdNode) {
+    //if(isTerminal(brdNode)){
+
+    
     return 0; 
 }
 
@@ -102,22 +117,66 @@ private ArrayList<Integer> Actions(Board brd){
     if(brd.getTurn()){ // if row Player turn
         int currRow = brd.getCurrentRow();
         for(int col=0; col<cells[currRow].length; col++){
-            actions.add(col);
+            if(!cells[currRow][col].isSelected())
+                actions.add(cells[currRow][col].getValue());
         }
     }
     else{ 
         int currCol = brd.getCurrentCol();
         for(int row=0; row<cells.length; row++){
-            actions.add(row);
+            if(!cells[row][currCol].isSelected())
+                actions.add(cells[row][currCol].getValue());
         }
     }
     
     return actions;
 }
 
-private boolean isTerminal(Board brd){
-    return brd.gameOver() || brd.getRowPlayer().isWinner(brd.getColPlayer()) 
-    || brd.getColPlayer().isWinner(brd.getRowPlayer());
+public boolean isTerminal(Board brd){
+    if(isBoardFull(brd)){
+        return true;
+    }
+    return nextAvailableMove(brd);
+    
+}
+
+private boolean isBoardFull(Board brd){
+    Cell[][] brdCells = brd.getCells();
+    for(int row=0; row<brdCells.length; row++){
+        for(int col=0; col<brdCells[row].length; col++){
+            if(!brdCells[row][col].isSelected()){ // if there are a few values left
+                return false;
+            }
+    }
+}
+    return true;
+
+}
+
+private boolean nextAvailableMove(Board brd){
+    int prevRow = brd.getPreviousRow();
+    int prevCol = brd.getPreviousCol();
+
+    if(prevRow == -1 && prevCol == -1){
+      return true;  
+    }
+    else{
+        for(int nextRow=-1; nextRow<=1; nextRow++){
+            for(int nextCol=-1; nextCol<=-1; nextCol++){
+                int adjacentRow = prevRow+nextRow;
+                int adjacentCol = prevCol+nextCol;
+                if(validCell(adjacentRow, adjacentCol)){
+                    if(!brd.getCells()[adjacentRow][adjacentCol].isSelected())
+                        return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+private boolean validCell(int row, int col){
+    return row >= 0 && row < gameBoard.getBoardSize() || col >= 0 && col < gameBoard.getBoardSize();
 }
 
 }
