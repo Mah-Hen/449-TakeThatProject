@@ -103,11 +103,14 @@ else{
     return copyBoard; // new modified board
 }
 
-private Integer utilityFunction(Node brdNode) {
-    //if(isTerminal(brdNode)){
+private Integer utilityFunction(Board brd) {
+    if(isTerminal(brd))
+        return 0; // fill in util body here
+    return evaluationFunction();
+}
 
-    
-    return 0; 
+private Integer evaluationFunction(){
+    return 0; // fill in eval body here
 }
 
 private ArrayList<Integer> Actions(Board brd){
