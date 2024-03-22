@@ -4,7 +4,7 @@ import java.util.List;
 public class Node {
     private Board gameBoard;
     private Node parent;
-    private int evalFunction;
+    //private int evalFunction;
 
 
 public Node(Board brd, Node parent) {
@@ -16,9 +16,7 @@ private Board getBoard(){
     return gameBoard;
 }
 
-private int getEvalFunction(){
-    return evalFunction;
-}
+
 
 public int minimaxSearch(){
     Node gameBoardNode = new Node(gameBoard, null);
@@ -28,13 +26,13 @@ public int minimaxSearch(){
     if(valueMoveList[1]!=null){
         int moveValue = valueMoveList[1];
         return moveValue;}
-    return 0; // Gotta find a number to act as our null flag or maybe change the return type
+    return -1; // Since we're returning a row/column position number 
 }
 
 public Integer[] maxValue(Node brdNode){
     Integer [] maxValueMoveList = new Integer [2];
     if(isTerminal(brdNode.getBoard())){
-        maxValueMoveList[0] = utilityFunction(brdNode);
+        maxValueMoveList[0] = utilityFunction(brdNode.getBoard());
         maxValueMoveList[1] = null;
         return maxValueMoveList;
     }
@@ -57,7 +55,7 @@ public Integer[] minValue(Node brdNode){
 
     Integer[] minValueMoveList = new Integer[2];
     if(isTerminal(brdNode.getBoard())){
-        minValueMoveList[0] = utilityFunction(brdNode);
+        minValueMoveList[0] = utilityFunction(brdNode.getBoard());
         minValueMoveList[1] = null;
         return minValueMoveList;
     }
@@ -85,7 +83,7 @@ private Board Result(Board brd, Integer action) {
         int currRow = brd.getCurrentRow();
         for(int col=0; col<copyBoardCell[currRow].length; col++){
             if(copyBoardCell[currRow][col].getValue() == chosenValue){
-                copyBoardCell[currRow][col].setValue(-100);; // Flag indicator to know its been selected
+                copyBoardCell[currRow][col].select(); // Flag indicator to know its been selected
                 break;
             }
         }
@@ -94,7 +92,7 @@ else{
     int currCol = brd.getCurrentCol();
     for(int row=0; row<copyBoardCell.length; row++){
         if(copyBoardCell[row][currCol].getValue() == chosenValue){
-            copyBoardCell[row][currCol].setValue(-100);; // Flag indicator to know its been selected
+            copyBoardCell[row][currCol].select();; // Flag indicator to know its been selected
             break;
         }
     }
@@ -106,11 +104,24 @@ else{
 private Integer utilityFunction(Board brd) {
     if(isTerminal(brd))
         return 0; // fill in util body here
-    return evaluationFunction();
+    return evaluationFunction(brd);
 }
 
-private Integer evaluationFunction(){
-    return 0; // fill in eval body here
+private Integer evaluationFunction(Board brd){
+    // Features and weights
+    // Feature: We could choose a value at a row/col then search through the row/col the value was selected at to dictate how well this move will be compared to the next player's move
+    // Feature: How well this value we are selecting compared to the rest of the values on the row/col
+    // Feature: We could compare the value the current player chosen to the previous players value
+    int prevRow = brd.getPreviousRow();
+    int prevCol = brd.getPreviousCol();
+    Cell[][] cells = brd.getCells();
+    int evalFunction = 0;
+
+    if(prevRow != -1 && prevCol !=-1){
+        int prevChosenVal = cells[prevRow][prevCol].getValue();
+    }
+
+    return evalFunction; // fill in eval body here
 }
 
 private ArrayList<Integer> Actions(Board brd){
@@ -136,6 +147,7 @@ private ArrayList<Integer> Actions(Board brd){
 }
 
 public boolean isTerminal(Board brd){
+
     if(isBoardFull(brd)){
         return true;
     }
@@ -159,27 +171,38 @@ private boolean isBoardFull(Board brd){
 private boolean nextAvailableMove(Board brd){
     int prevRow = brd.getPreviousRow();
     int prevCol = brd.getPreviousCol();
+    int selectionRange = brd.getBoardSize()-1;
 
     if(prevRow == -1 && prevCol == -1){
       return true;  
     }
+    // We could make this faster by creating an if case based on who's move it is
     else{
-        for(int nextRow=-1; nextRow<=1; nextRow++){
-            for(int nextCol=-1; nextCol<=-1; nextCol++){
-                int adjacentRow = prevRow+nextRow;
+        if(brd.getTurn()){ // if current turn is rows
+            // Reason why we're going up until the boardSize-1 is because we're thinking in sense of the corner of the grid. Sure we could make another if statement to descrease traversal range
+            for(int nextCol=-selectionRange; nextCol<=selectionRange; nextCol++){
                 int adjacentCol = prevCol+nextCol;
-                if(validCell(adjacentRow, adjacentCol)){
-                    if(!brd.getCells()[adjacentRow][adjacentCol].isSelected())
+                if(validCell(prevRow, adjacentCol)){
+                    if(!brd.getCells()[prevRow][adjacentCol].isSelected())
                         return true;
                 }
             }
         }
-    }
+        for(int nextRow=-selectionRange; nextRow<=selectionRange; nextRow++){
+            int adjacentRow = prevRow+nextRow;
+            if(validCell(adjacentRow, prevCol)){
+                if(!brd.getCells()[adjacentRow][prevCol].isSelected()){
+                    return true;
+                }
+            }
+        }
     return false;
+    }
+   
 }
 
 private boolean validCell(int row, int col){
-    return row >= 0 && row < gameBoard.getBoardSize() || col >= 0 && col < gameBoard.getBoardSize();
+    return (row >= 0 && row < gameBoard.getBoardSize()) && (col >= 0 && col < gameBoard.getBoardSize());
 }
 
 }

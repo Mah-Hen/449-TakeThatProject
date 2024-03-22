@@ -20,7 +20,7 @@ public class Board
     extends JPanel {
   private Player rowP; // the two players
   private Player colP;
-  private int previousChosenRow, previousChosenCol = -1;
+  private int previousChosenRow =-1, previousChosenCol = -1;
   private boolean isRowsTurn; // whose turn is it
   private int currentRow, currentCol; // row and column of last move
   private JLabel[] colLabels; // the labels that indicate which column to play in
@@ -111,7 +111,7 @@ public class Board
 	  if (isRowsTurn) // is it row player's turn?
 	  {
 		  // tell user the computer player is thinking
-		   messageLabel.setText(rowP.getName()+" is \nthinking");
+		   messageLabel.setText(rowP.getName()+"'s thinking");
 		   // determine the player's move
 		   int colChoice = makeComputerChoice();
 		   // attempt to make the move
@@ -121,7 +121,7 @@ public class Board
 	  }
 	  else // similar for column player
 	  {
-		   messageLabel.setText(colP.getName()+" is \nthinking");
+		   messageLabel.setText(colP.getName()+"'s thinking");
 		   int rowChoice = makeComputerChoice();
 		   if (makeMove(rowChoice, currentCol, 
 				   cells[rowChoice][currentCol].getValue()))
@@ -142,13 +142,13 @@ public class Board
     Node gameNode = new Node(rowP.getBoard(), null);
 
     // *READ ME* This is prolly where we're going to implement the minimax algorithm. 
-    // Then create the alphaBeta from there. What you think? I also found a bug in his code. 
+    // Then create the alphaBeta from there. What you think?
 	  if (isRowsTurn){
       gameNode.isTerminal(rowP.getBoard());
 		  while (cells[currentRow][answer = rand.nextInt(rowLabels.length)].isSelected());}
-	  else
+	  else{
       gameNode.isTerminal(colP.getBoard());
-		  while (cells[answer = rand.nextInt(rowLabels.length)][currentCol].isSelected());
+		  while (cells[answer = rand.nextInt(rowLabels.length)][currentCol].isSelected());}
 	  return answer;
 		  
 	  	
@@ -172,6 +172,7 @@ public class Board
       {
         add(new JLabel(rowP.getWinner(colP))); // announce the winner
       }
+      setPreviousChosenPosition(row, col);
       return true;
     }
     else if (!isRowsTurn && col==currentCol) // do analogous things for columns
@@ -185,6 +186,7 @@ public class Board
       cells[row][col].select();
       if (gameOver())
         add(new JLabel(rowP.getWinner(colP)));
+      setPreviousChosenPosition(row, col);
       return true;
     }
     else
