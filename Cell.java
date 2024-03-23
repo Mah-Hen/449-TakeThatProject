@@ -31,6 +31,9 @@ public class Cell
   public boolean isSelected() { return selected; } // accessors
   public int getValue() { return value; }
   public void setValue(int newVal){ value=newVal;}
+  public void setText(int value){
+    this.setText(""+value);
+  }
   public void select() // mark as selected; change the text too
   {
     selected = true;

@@ -144,11 +144,9 @@ public class Board
     // *READ ME* This is prolly where we're going to implement the minimax algorithm. 
     // Then create the alphaBeta from there. What you think?
 	  if (isRowsTurn){
-      gameNode.isTerminal(rowP.getBoard());
-		  while (cells[currentRow][answer = rand.nextInt(rowLabels.length)].isSelected());}
+		  while (cells[currentRow][answer = gameNode.minimaxSearch()].isSelected());}
 	  else{
-      gameNode.isTerminal(colP.getBoard());
-		  while (cells[answer = rand.nextInt(rowLabels.length)][currentCol].isSelected());}
+		  while (cells[answer = gameNode.minimaxSearch()][currentCol].isSelected());}
 	  return answer;
 		  
 	  	
@@ -211,6 +209,16 @@ public class Board
       return true;
     }
   }
+
+  public void switchTurn(){
+    if(this.isRowsTurn){
+      this.isRowsTurn = false;
+    }
+    else{
+      this.isRowsTurn = true;
+    }
+    
+  }
   
   public void setMessage(String mesg)
   // change the message label
@@ -247,11 +255,26 @@ public class Board
     return isRowsTurn;
   }
 
-
   public Board copy(){
     Random rand = new Random();
-    return new Board(this.brdSize, this.rowP, this.colP, this.brdMin, this.brdMax, rand);
+    Board copyBoard = new Board(this.brdSize, this.rowP, this.colP, this.brdMin, this.brdMax, rand);
+    Cell[][] cells = copyBoard.getCells();
+
+    // Update the cells in the copy board
+    for(int row=0; row<cells.length; row++){
+        for(int col=0; col<cells[row].length; col++){
+            cells[row][col].setValue(this.cells[row][col].getValue()); // copy each value in the board 
+            cells[row][col].setText(this.cells[row][col].getValue()); // modify the text of the cell
+            if(this.cells[row][col].isSelected()){
+                cells[row][col].select();
+            }
+        }
+
+    }
+
+    return copyBoard;
   }
+
   public void setPreviousChosenPosition(int row, int col){
     this.previousChosenRow = row;
     this.previousChosenCol = col;

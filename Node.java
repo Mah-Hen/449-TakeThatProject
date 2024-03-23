@@ -23,13 +23,16 @@ public int minimaxSearch(){
 
     Integer[] valueMoveList = maxValue(gameBoardNode);
     int utilValue = valueMoveList[0];
+
     if(valueMoveList[1]!=null){
         int moveValue = valueMoveList[1];
         return moveValue;}
+
     return -1; // Since we're returning a row/column position number 
 }
 
 public Integer[] maxValue(Node brdNode){
+
     Integer [] maxValueMoveList = new Integer [2];
     if(isTerminal(brdNode.getBoard())){
         maxValueMoveList[0] = utilityFunction(brdNode.getBoard());
@@ -39,7 +42,8 @@ public Integer[] maxValue(Node brdNode){
     int lowValue = Integer.MIN_VALUE;
     for(Integer action:Actions(brdNode.getBoard())){
         Board modifiedBoard = Result(brdNode.getBoard(), action);
-        Node modifiedBoardNode = new Node(modifiedBoard, parent);
+        modifiedBoard.switchTurn();
+        Node modifiedBoardNode = new Node(modifiedBoard, brdNode); // Parent is the brdNode
         Integer [] minValueMoveList = minValue(modifiedBoardNode);
         Integer minLowValue = minValueMoveList[0]; // Utility Function
         if (minLowValue > lowValue){ // if the node's util function is greater than the low value
@@ -62,6 +66,7 @@ public Integer[] minValue(Node brdNode){
     int highValue = Integer.MAX_VALUE;
     for(Integer action:Actions(brdNode.getBoard())){
         Board modifiedBoard = Result(brdNode.getBoard(), action); // new Board after the action is applied
+        modifiedBoard.switchTurn(); // reason why I put here and not at top is because of the first calling of 'maxValue' if we switch turn immediately when alg started it wouldve made player 2 MAX.
         Node modifiedBoardNode = new Node(modifiedBoard, brdNode);
         Integer[] maxValueMoveList = maxValue(modifiedBoardNode);
         Integer maxLowValue = maxValueMoveList[0]; // Utility Function
@@ -78,21 +83,34 @@ private Board Result(Board brd, Integer action) {
     Board copyBoard = brd.copy(); // Getters and Setters
     Cell[][] copyBoardCell = copyBoard.getCells();
     int chosenValue = action;
+    int currRow = 0;
+    int currCol = 0;
+
 
     if(brd.getTurn()){ // if row Player turn
-        int currRow = brd.getCurrentRow();
+        if(brd.getPreviousRow()==-1)
+            currRow = brd.getCurrentRow();
+        else{
+            currRow = brd.getPreviousRow();
+        }
         for(int col=0; col<copyBoardCell[currRow].length; col++){
             if(copyBoardCell[currRow][col].getValue() == chosenValue){
                 copyBoardCell[currRow][col].select(); // Flag indicator to know its been selected
+                copyBoard.setPreviousChosenPosition(currRow, col);
                 break;
             }
         }
 }
 else{
-    int currCol = brd.getCurrentCol();
+    if(brd.getPreviousRow()==-1)
+            currCol = brd.getCurrentCol();
+        else{
+            currCol = brd.getPreviousCol();
+        }
     for(int row=0; row<copyBoardCell.length; row++){
         if(copyBoardCell[row][currCol].getValue() == chosenValue){
             copyBoardCell[row][currCol].select();; // Flag indicator to know its been selected
+            copyBoard.setPreviousChosenPosition(row, currCol);
             break;
         }
     }
@@ -116,8 +134,11 @@ private Integer evaluationFunction(Board brd){
     int prevCol = brd.getPreviousCol();
     Cell[][] cells = brd.getCells();
     int evalFunction = 0;
+    if(brd.getTurn()){ // if rows turn
+        
+    }
 
-    if(prevRow != -1 && prevCol !=-1){
+    if(prevRow != -1 && prevCol !=-1){ // 1st Feature
         int prevChosenVal = cells[prevRow][prevCol].getValue();
     }
 
@@ -127,16 +148,26 @@ private Integer evaluationFunction(Board brd){
 private ArrayList<Integer> Actions(Board brd){
     ArrayList<Integer> actions = new ArrayList<>();
     Cell[][] cells = brd.getCells();
+    int currRow = 0;
+    int currCol = 0;
 
     if(brd.getTurn()){ // if row Player turn
-        int currRow = brd.getCurrentRow();
+        if(brd.getPreviousRow()==-1)
+            currRow = brd.getCurrentRow();
+        else{
+            currRow = brd.getPreviousRow();
+        }
         for(int col=0; col<cells[currRow].length; col++){
             if(!cells[currRow][col].isSelected())
                 actions.add(cells[currRow][col].getValue());
         }
     }
     else{ 
-        int currCol = brd.getCurrentCol();
+        if(brd.getPreviousCol()==-1)
+            currCol = brd.getCurrentCol();
+        else{
+            currCol = brd.getPreviousCol();
+        }
         for(int row=0; row<cells.length; row++){
             if(!cells[row][currCol].isSelected())
                 actions.add(cells[row][currCol].getValue());
@@ -151,7 +182,7 @@ public boolean isTerminal(Board brd){
     if(isBoardFull(brd)){
         return true;
     }
-    return nextAvailableMove(brd);
+    return !nextAvailableMove(brd);
     
 }
 
@@ -204,5 +235,7 @@ private boolean nextAvailableMove(Board brd){
 private boolean validCell(int row, int col){
     return (row >= 0 && row < gameBoard.getBoardSize()) && (col >= 0 && col < gameBoard.getBoardSize());
 }
+
+
 
 }
