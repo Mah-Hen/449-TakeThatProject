@@ -28,7 +28,7 @@ public int minimaxSearch(){
         int moveValue = valueMoveList[1];
         return moveValue;}
 
-    return -1; // Since we're returning a row/column position number 
+    return -1; // Since we're returning a row/column position number. Error, flag case 
 }
 
 public Integer[] maxValue(Node brdNode){
@@ -56,7 +56,6 @@ public Integer[] maxValue(Node brdNode){
 }
 
 public Integer[] minValue(Node brdNode){
-
     Integer[] minValueMoveList = new Integer[2];
     if(isTerminal(brdNode.getBoard())){
         minValueMoveList[0] = utilityFunction(brdNode.getBoard());
@@ -79,8 +78,81 @@ public Integer[] minValue(Node brdNode){
     return minValueMoveList;
 }
 
+public int alphaBetaSearch(){
+    Node gameBoardNode = new Node(gameBoard, null);
+    Integer [] valueMoveList = alphaBetaMaxValue(gameBoardNode, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    if(valueMoveList[1]!=null){
+        int moveValue = valueMoveList[1];
+        return moveValue;}
+
+    return -1;
+}
+
+private Integer[] alphaBetaMaxValue(Node brdNode, int lowestVal, int highestVal){
+    Integer [] maxValueMoveList = new Integer[2];
+    if(isTerminal(brdNode.getBoard())){
+        maxValueMoveList[0] = utilityFunction(brdNode.getBoard());
+        maxValueMoveList[1] = null;
+        return maxValueMoveList;
+    }
+    int maxValueLowValue = lowestVal;
+    for(Integer action:Actions(brdNode.getBoard())){
+        Board modifiedBoard = Result(gameBoard, action);
+        modifiedBoard.switchTurn();
+        Node modifiedBoardNode = new Node(modifiedBoard, brdNode);
+        Integer [] minValueMoveList = alphaBetaMinValue(modifiedBoardNode, lowestVal, highestVal);
+        if(minValueMoveList[0] > maxValueLowValue){
+            maxValueLowValue = maxValueMoveList[0];
+            maxValueMoveList[1] = action;
+            lowestVal = alphaBetaMax(lowestVal, maxValueLowValue);
+        }
+        if(maxValueLowValue >= lowestVal){
+            maxValueMoveList[0] = maxValueLowValue;
+            return maxValueMoveList;
+        }
+    }
+
+    return maxValueMoveList;
+}
+
+private Integer[] alphaBetaMinValue(Node brdNode, int lowestVal, int highestVal){
+    Integer [] minValueMoveList = new Integer[2];
+    if(isTerminal(brdNode.getBoard())){
+        minValueMoveList[0] = utilityFunction(brdNode.getBoard());
+        minValueMoveList[1] = null;
+        return minValueMoveList;
+    }
+    int minValueHighValue = highestVal;
+    for(Integer action:Actions(brdNode.getBoard())){
+        Board modifiedBoard = Result(gameBoard, action);
+        modifiedBoard.switchTurn();
+        Node modifiedBoardNode = new Node(modifiedBoard, brdNode);
+        Integer[] maxValueMoveList = alphaBetaMaxValue(modifiedBoardNode, lowestVal, highestVal);
+        if(maxValueMoveList[0] < minValueHighValue){
+            minValueHighValue = minValueMoveList[0];
+            minValueMoveList[1] = action;
+            lowestVal = alphaBetaMin(lowestVal, minValueHighValue);
+        }
+        if(minValueHighValue <= lowestVal){
+            minValueMoveList[0] = minValueHighValue;
+            return minValueMoveList;
+        }
+    }
+
+    return minValueMoveList;
+}
+
+private int alphaBetaMax(int lowestVal, int maxLowValue){
+    return 0;
+}
+
+private int alphaBetaMin(int highestVal, int lowHighValue){
+    return 0;
+}
+
+
 private Board Result(Board brd, Integer action) {
-    Board copyBoard = brd.copy(); // Getters and Setters
+    Board copyBoard = brd.Copy(); // Getters and Setters
     Cell[][] copyBoardCell = copyBoard.getCells();
     int chosenValue = action;
     int currRow = 0;

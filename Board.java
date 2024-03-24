@@ -255,7 +255,7 @@ public class Board
     return isRowsTurn;
   }
 
-  public Board copy(){
+  public Board Copy(){
     Random rand = new Random();
     Board copyBoard = new Board(this.brdSize, this.rowP, this.colP, this.brdMin, this.brdMax, rand);
     Cell[][] cells = copyBoard.getCells();
