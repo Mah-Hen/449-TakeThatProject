@@ -88,25 +88,25 @@ public int alphaBetaSearch(){
     return -1;
 }
 
-private Integer[] alphaBetaMaxValue(Node brdNode, int lowestVal, int highestVal){
+private Integer[] alphaBetaMaxValue(Node brdNode, int atLeast, int atMost){
     Integer [] maxValueMoveList = new Integer[2];
     if(isTerminal(brdNode.getBoard())){
         maxValueMoveList[0] = utilityFunction(brdNode.getBoard());
         maxValueMoveList[1] = null;
         return maxValueMoveList;
     }
-    int maxValueLowValue = lowestVal;
+    int maxValueLowValue = atLeast;
     for(Integer action:Actions(brdNode.getBoard())){
         Board modifiedBoard = Result(gameBoard, action);
         modifiedBoard.switchTurn();
         Node modifiedBoardNode = new Node(modifiedBoard, brdNode);
-        Integer [] minValueMoveList = alphaBetaMinValue(modifiedBoardNode, lowestVal, highestVal);
+        Integer [] minValueMoveList = alphaBetaMinValue(modifiedBoardNode, atLeast, atMost);
         if(minValueMoveList[0] > maxValueLowValue){
             maxValueLowValue = maxValueMoveList[0];
             maxValueMoveList[1] = action;
-            lowestVal = alphaBetaMax(lowestVal, maxValueLowValue);
+            atLeast = alphaBetaMax(atLeast, maxValueLowValue);
         }
-        if(maxValueLowValue >= lowestVal){
+        if(maxValueLowValue >= atLeast){
             maxValueMoveList[0] = maxValueLowValue;
             return maxValueMoveList;
         }
@@ -115,25 +115,25 @@ private Integer[] alphaBetaMaxValue(Node brdNode, int lowestVal, int highestVal)
     return maxValueMoveList;
 }
 
-private Integer[] alphaBetaMinValue(Node brdNode, int lowestVal, int highestVal){
+private Integer[] alphaBetaMinValue(Node brdNode, int atLeast, int atMost){
     Integer [] minValueMoveList = new Integer[2];
     if(isTerminal(brdNode.getBoard())){
         minValueMoveList[0] = utilityFunction(brdNode.getBoard());
         minValueMoveList[1] = null;
         return minValueMoveList;
     }
-    int minValueHighValue = highestVal;
+    int minValueHighValue = atMost;
     for(Integer action:Actions(brdNode.getBoard())){
         Board modifiedBoard = Result(gameBoard, action);
         modifiedBoard.switchTurn();
         Node modifiedBoardNode = new Node(modifiedBoard, brdNode);
-        Integer[] maxValueMoveList = alphaBetaMaxValue(modifiedBoardNode, lowestVal, highestVal);
+        Integer[] maxValueMoveList = alphaBetaMaxValue(modifiedBoardNode, atLeast, atMost);
         if(maxValueMoveList[0] < minValueHighValue){
             minValueHighValue = minValueMoveList[0];
             minValueMoveList[1] = action;
-            lowestVal = alphaBetaMin(lowestVal, minValueHighValue);
+            atLeast = alphaBetaMin(atLeast, minValueHighValue);
         }
-        if(minValueHighValue <= lowestVal){
+        if(minValueHighValue <= atLeast){
             minValueMoveList[0] = minValueHighValue;
             return minValueMoveList;
         }
@@ -142,11 +142,11 @@ private Integer[] alphaBetaMinValue(Node brdNode, int lowestVal, int highestVal)
     return minValueMoveList;
 }
 
-private int alphaBetaMax(int lowestVal, int maxLowValue){
+private int alphaBetaMax(int atLeast, int maxLowValue){
     return 0;
 }
 
-private int alphaBetaMin(int highestVal, int lowHighValue){
+private int alphaBetaMin(int atMost, int lowHighValue){
     return 0;
 }
 
