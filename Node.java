@@ -4,18 +4,28 @@ import java.util.List;
 public class Node {
     private Board gameBoard;
     private Node parent;
+    private int ply=0;
     //private int evalFunction;
 
 
 public Node(Board brd, Node parent) {
-    this.gameBoard = brd; // intialize intial state
-    this.parent = parent; // initialize state parent
+    this.gameBoard = brd; // declare intial state
+    this.parent = parent; // declare state parent
+}
+
+public Node(Board brd, Node parent, int ply){
+    this.gameBoard = brd; // delcare intial state
+    this.parent = parent; // declare state parent
+    this.ply = ply; // declare path Cost/ply
 }
 
 private Board getBoard(){
-    return gameBoard;
+    return this.gameBoard;
 }
 
+private int getPly(){
+    return this.ply;
+}
 
 
 public int minimaxSearch(){
@@ -43,7 +53,7 @@ public Integer[] maxValue(Node brdNode){
     for(Integer action:Actions(brdNode.getBoard())){
         Board modifiedBoard = Result(brdNode.getBoard(), action);
         modifiedBoard.switchTurn();
-        Node modifiedBoardNode = new Node(modifiedBoard, brdNode); // Parent is the brdNode
+        Node modifiedBoardNode = new Node(modifiedBoard, brdNode, ply+1); // Parent is the brdNode
         Integer [] minValueMoveList = minValue(modifiedBoardNode);
         Integer minLowValue = minValueMoveList[0]; // Utility Function
         if (minLowValue > lowValue){ // if the node's util function is greater than the low value
@@ -104,7 +114,7 @@ private Integer[] alphaBetaMaxValue(Node brdNode, int atLeast, int atMost){
         if(minValueMoveList[0] > maxValueLowValue){
             maxValueLowValue = maxValueMoveList[0];
             maxValueMoveList[1] = action;
-            atLeast = alphaBetaMax(atLeast, maxValueLowValue);
+            atLeast = Math.max(atLeast, maxValueLowValue);
         }
         if(maxValueLowValue >= atLeast){
             maxValueMoveList[0] = maxValueLowValue;
@@ -131,7 +141,7 @@ private Integer[] alphaBetaMinValue(Node brdNode, int atLeast, int atMost){
         if(maxValueMoveList[0] < minValueHighValue){
             minValueHighValue = minValueMoveList[0];
             minValueMoveList[1] = action;
-            atLeast = alphaBetaMin(atLeast, minValueHighValue);
+            atLeast = Math.min(atLeast, minValueHighValue);
         }
         if(minValueHighValue <= atLeast){
             minValueMoveList[0] = minValueHighValue;
@@ -140,14 +150,6 @@ private Integer[] alphaBetaMinValue(Node brdNode, int atLeast, int atMost){
     }
 
     return minValueMoveList;
-}
-
-private int alphaBetaMax(int atLeast, int maxLowValue){
-    return 0;
-}
-
-private int alphaBetaMin(int atMost, int lowHighValue){
-    return 0;
 }
 
 
@@ -308,6 +310,12 @@ private boolean validCell(int row, int col){
     return (row >= 0 && row < gameBoard.getBoardSize()) && (col >= 0 && col < gameBoard.getBoardSize());
 }
 
+private boolean isCutOff(Node brdNode, int depth){
+    if(brdNode.getPly() <= depth){
+        return true;
+    }
+    return false;
+}
 
 
 }
