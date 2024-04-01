@@ -12,6 +12,7 @@ public class Player
   private boolean isComputer; // is this player a computer?
   private JLabel scoreLabel; // what to display in the gui
   private Board theBoard; // link to board
+  private int hypoScore;
   public Player(String n, boolean isComp) {
 	  // n - name
 	  // isComp - is this a computer player
@@ -37,6 +38,11 @@ public class Player
     score += s;
     scoreLabel.setText(""+score); // change gui to
   }
+
+  public void setScore(int s){
+    score=s;
+  }
+
   public boolean isComputer()
   { // accessor
 	  return isComputer;
@@ -45,6 +51,14 @@ public class Player
   {
 	  // accessor for score
 	  return score;
+  }
+
+  public void setHypoScore(int s){
+    hypoScore = s;
+  }
+
+  public int getHypoScore(){
+    return hypoScore;
   }
 
   public String getName(){

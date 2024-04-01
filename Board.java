@@ -255,11 +255,21 @@ public class Board
     return isRowsTurn;
   }
 
+  public void setTurn(boolean turn){
+    isRowsTurn = turn;
+  }
+
   public Board Copy(){
     Random rand = new Random();
-    Board copyBoard = new Board(this.brdSize, this.rowP, this.colP, this.brdMin, this.brdMax, rand);
+    Player rowPlayer = new Player(this.rowP.getName(), this.rowP.isComputer());
+    Player colPlayer = new Player(this.colP.getName(), this.colP.isComputer());
+    Board copyBoard = new Board(this.brdSize, rowPlayer, colPlayer, this.brdMin, this.brdMax, rand);
+    copyBoard.setTurn(this.getTurn());
     Cell[][] cells = copyBoard.getCells();
 
+
+    
+    
     // Update the cells in the copy board
     for(int row=0; row<cells.length; row++){
         for(int col=0; col<cells[row].length; col++){
