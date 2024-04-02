@@ -268,7 +268,9 @@ public class Board
     Cell[][] cells = copyBoard.getCells();
 
 
-    
+    //Update the players
+    rowPlayer.setScore(this.rowP.getScore());
+    colPlayer.setScore(this.colP.getScore());
     
     // Update the cells in the copy board
     for(int row=0; row<cells.length; row++){

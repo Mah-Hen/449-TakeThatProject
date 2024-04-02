@@ -33,11 +33,11 @@ public int minimaxSearch(){
     Node gameBoardNode = new Node(gameBoard, null);
 
     String[] valueMoveList = maxValue(gameBoardNode);
-    int utilValue = Integer.parseInt(valueMoveList[0]);
+    Double utilValue = Double.parseDouble(valueMoveList[0]);
 
     if(valueMoveList[1]!= null){ // if there is a move
-        int row = valueMoveList[1].charAt(0);
-        int col = valueMoveList[1].charAt(1);
+        int row = Character.getNumericValue(valueMoveList[1].charAt(0));
+        int col = Character.getNumericValue(valueMoveList[1].charAt(1));
         if(gameBoardNode.gameBoard.getTurn()) // if rows turn
             return col;
         return row;}
@@ -243,19 +243,23 @@ private int valuesGreaterThan(Board brd){
     if(brd.getTurn()){ // if previous player was col
         for(int row=0; row<cells[currCol].length; row++){
             // if this value is greater than any value on the column
-            if(cells[currRow][currCol].getValue()>cells[row][currCol].getValue()){ 
-                cnt++; // count the total values this move is greater than
+            if(!cells[row][currCol].isSelected()){
+                if(cells[currRow][currCol].getValue()>cells[row][currCol].getValue()){ 
+                    cnt++; // count the total values this move is greater than
+                }
             }
         }
     }
     else{ // previous player was row
         for(int col=0; col<cells.length; col++){
-            if(cells[currRow][currCol].getValue()>cells[currRow][col].getValue()){ 
-                cnt++;
+            if(!cells[currRow][col].isSelected()){
+                if(cells[currRow][currCol].getValue()>cells[currRow][col].getValue()){ 
+                    cnt++;
+                }
             }
-    }
 
-}
+        }
+    }   
     return cnt;
 }
 
@@ -269,14 +273,14 @@ private int valuesSmallerThan(Board brd){
     if(brd.getTurn()){ // if previous player was col
         for(int row=0; row<cells[currCol].length; row++){
             // if this value is greater than any value on the column
-            if(cells[currRow][currCol].getValue()<cells[row][currCol].getValue()){ 
+            if(cells[currRow][currCol].getValue()<cells[row][currCol].getValue() && !cells[row][currCol].isSelected()){ 
                 cnt++; // count the total values this move is greater than
             }
         }
     }
     else{ // previous player was row
         for(int col=0; col<cells.length; col++){
-            if(cells[currRow][currCol].getValue()<cells[currRow][col].getValue()){ 
+            if(cells[currRow][currCol].getValue()<cells[currRow][col].getValue() && !cells[currRow][col].isSelected()){ 
                 cnt++;
             }
     }
@@ -316,10 +320,12 @@ private double nextPlayersMove(Board brd){
         }
     }
 
-    int previousScore = brd.getRowPlayer().getScore();
+    int previousScore = brd.getRowPlayer().getScore(); // currentScore or previousScore that was made by the previous Max/Min
     if(brd.getTurn()){ // previous turn was col
         previousScore = brd.getColPlayer().getScore();
     } // Compare the next turn's score with the previous turn's score
+    if(previousScore < 0 || maxScore < 0)
+        return (double)(previousScore + maxScore)/(previousScore-maxScore);
     return (double)(previousScore-maxScore)/(previousScore+maxScore);
 }
 
@@ -330,11 +336,11 @@ private double scoreAdvantage(Board brd){
     int colScore = brd.getColPlayer().getScore();
     double scoreAdvantage;
 
-    if(brd.getTurn()){ // prev turn was col
-        scoreAdvantage = (double)(rowScore-colScore)/(colScore+rowScore);
+    if(brd.getTurn()){ // prev turn (Min/Max) was col
+        scoreAdvantage = (double)(colScore-rowScore)/(colScore+rowScore);
     }
     else{
-        scoreAdvantage = (double)(colScore-rowScore)/(rowScore+colScore);
+        scoreAdvantage = (double)(rowScore-colScore)/(rowScore+colScore);
     }
 
     if(Math.abs(scoreAdvantage) == 1.0){
